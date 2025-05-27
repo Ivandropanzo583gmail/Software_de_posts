@@ -13,6 +13,7 @@ import {
   Settings,
   LogOut,
 } from "lucide-react";
+import Link from "next/link";
 
 export default function Sidebar() {
   return (
@@ -20,9 +21,13 @@ export default function Sidebar() {
       <div>
         {/* Navegação principal */}
         <nav className="space-y-2">
-          <SidebarItem icon={<Home size={18} />} label="Dashboard" active />
+          <Link href = "/">
+            <SidebarItem icon={<Home size={18} />} label="Dashboard" active />
+          </Link>
           <SidebarItem icon={<ShoppingCart size={18} />} label="Order" />
-          <SidebarItem icon={<Users size={18} />} label="Customer" />
+          <Link href="/Client">
+            <SidebarItem icon={<Users size={18} />} label="Customer" active/>
+          </Link>
           <SidebarItem icon={<Boxes size={18} />} label="Inventory" />
           <SidebarItem icon={<FileText size={18} />} label="Accounting" />
           <SidebarItem icon={<BarChart size={18} />} label="Report" />
