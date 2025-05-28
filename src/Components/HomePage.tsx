@@ -30,11 +30,17 @@ export default function HomePage() {
         <Card title="TODAY'S VISITOR" value="100" percentage="-20%" negative icon={Users} />
       </section>
 
-      <section className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <SalesActivity />
-        <SalesSources />
-        <Products />
+      <section className="grid grid-cols-1 gap-4">
+        <div className="grid md:grid-cols-2 gap-4">
+          <SalesActivity />
+          <SalesSources />
+        </div>
+
+        <div className="flex justify-center">
+          <Products />
+        </div>
       </section>
+
     </div>
   );
 }
