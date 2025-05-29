@@ -45,7 +45,10 @@ export default function Products() {
           <tbody className="text-sm text-gray-700">
             {products.map((produtos) => (
               <tr key={produtos.id} className="bg-gray-50 rounded-md shadow-sm">
-                <td className="flex items-center gap-2 px-4 py-3 font-medium max-w-[200px] truncate">
+                <td
+                  className="flex items-center gap-2 px-4 py-3 font-medium max-w-[300px] truncate"
+                  title={produtos.title}
+                >
                   {produtos.title}
                 </td>
                 <td className="px-4 py-3">kz {produtos.price.toFixed(2)}</td>
@@ -61,7 +64,10 @@ export default function Products() {
 
             {/* Item fixo */}
             <tr className="bg-gray-50 rounded-md shadow-sm">
-              <td className="flex items-center gap-2 px-4 py-3 font-medium max-w-[200px] truncate">
+              <td
+                className="flex items-center gap-2 px-4 py-3 font-medium max-w-[300px] truncate"
+                title="Manjuco masculina"
+              >
                 Manjuco masculina
               </td>
               <td className="px-4 py-3">kz 150,000.00</td>

@@ -1,3 +1,6 @@
+// ❌ NÃO colocar "use client" aqui!
+
+
 
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
@@ -20,7 +23,7 @@ export const metadata: Metadata = {
   title: "Gestão Empresarial",
   description: "Software saas",
   icons: {
-    icon: "/logo2.png",
+    icon: "/logo.png",
   },
 };
 
@@ -36,7 +39,7 @@ export default function RootLayout({
           <Sidebar />
           <div className="flex flex-col flex-grow min-w-0">
             <Navbar />
-            <main className="flex-1 overflow-auto p-6 ">{children}</main>
+            <main className="flex-1 overflow-auto p-6">{children}</main>
           </div>
         </div>
       </body>

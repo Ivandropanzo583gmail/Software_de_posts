@@ -31,22 +31,24 @@ export default function Sidebar() {
 
   return (
     <aside className="bg-white border-t md:border-r md:border-t-0 w-full md:w-64 h-16 md:h-screen px-4 py-2 md:py-6 flex md:flex-col justify-between fixed bottom-0 md:static z-50 font-[Geist]">
-      {/* Conteúdo principal */}
+      {/* Conteúdo principal rolável no mobile */}
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3 }}
-        className="flex md:flex-col w-full justify-around md:justify-start md:items-stretch md:space-y-1"
+        className="w-full md:flex-1"
       >
-        {mainLinks.map((link) => (
-          <Link key={link.href} href={link.href} className="w-full">
-            <SidebarItem
-              icon={link.icon}
-              label={link.label}
-              active={pathname === link.href}
-            />
-          </Link>
-        ))}
+        <div className="flex md:flex-col justify-around md:justify-start md:items-stretch md:space-y-1 overflow-y-auto md:overflow-visible max-h-16 md:max-h-full">
+          {mainLinks.map((link) => (
+            <Link key={link.href} href={link.href} className="w-full">
+              <SidebarItem
+                icon={link.icon}
+                label={link.label}
+                active={pathname === link.href}
+              />
+            </Link>
+          ))}
+        </div>
       </motion.div>
 
       {/* Canais vinculados - só visíveis em telas médias para cima */}

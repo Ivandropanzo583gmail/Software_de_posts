@@ -7,7 +7,7 @@ export default function Navbar() {
   return (
     <header className="h-20 w-full bg-white flex items-center justify-between px-7 shadow z-10 font-[Geist]">
       {/* Título fixo à esquerda */}
-      <p className="font-semibold text-xl">Gestão Empresarial</p>
+      <p className="font-semibold text-xl text-black">Gestão Empresarial</p>
 
       {/* Ícones e avatar à direita */}
       <div className="flex items-center gap-4">

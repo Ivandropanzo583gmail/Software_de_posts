@@ -1,10 +1,11 @@
-import HomePage from "@/Components/HomePage";
+import EntryScreen from "@/Components/EntryScreen";
+
 
 
 export default function Home() {
   return (
     <div className="bg-white">
-      <HomePage /> 
+      <EntryScreen /> 
     </div>
   );
 }

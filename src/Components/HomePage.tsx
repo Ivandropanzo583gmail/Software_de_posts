@@ -18,11 +18,11 @@ export default function HomePage() {
   return (
     <div className="p-6 bg-gray-100 min-h-screen font-[Geist]">
       <header className="mb-6">
-        <h1 className="text-xl font-semibold">Hello Ivandro,</h1>
+        <h1 className="text-xl font-semibold text-black">Hello Ivandro,</h1>
         <p className="text-gray-500">Here's what's happening in your store</p>
       </header>
 
-      <section className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+      <section className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6 text-black">
         {[ 
           { title: "TOTAL SALES", value: "₦715,000", percentage: "+8%", icon: DollarSign },
           { title: "TODAY'S SALES", value: "₦45,000", percentage: "+12%", icon: ShoppingCart },
