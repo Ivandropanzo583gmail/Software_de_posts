@@ -21,17 +21,8 @@ function calculateDash(value: number) {
   return (value / 100) * circumference;
 }
 
-function polarToCartesian(centerX: number, centerY: number, radius: number, angleInDegrees: number) {
-  const angleInRadians = (angleInDegrees - 90) * Math.PI / 180.0;
-  return {
-    x: centerX + radius * Math.cos(angleInRadians),
-    y: centerY + radius * Math.sin(angleInRadians)
-  };
-}
-
 export default function SalesSources(): JSX.Element {
   let offset = 0;
-  let angleOffset = 0;
 
   return (
     <div className="bg-white p-6 rounded-lg shadow w-full max-w-md mx-auto">
@@ -44,38 +35,21 @@ export default function SalesSources(): JSX.Element {
             const strokeDasharray = `${dash} ${circumference - dash}`;
             const strokeDashoffset = circumference - offset;
 
-            // calcular o ângulo médio para posicionar o percentual
-            const angle = angleOffset + (value / 2) * 3.6; // 3.6 = 360/100
-            const labelPos = polarToCartesian(20, 20, radius + 6, angle);
-
             offset += rawDash;
-            angleOffset += value * 3.6;
 
             return (
-              <React.Fragment key={index}>
-                <circle
-                  cx="20"
-                  cy="20"
-                  r={radius}
-                  fill="transparent"
-                  stroke={color}
-                  strokeWidth={strokeWidth}
-                  strokeDasharray={strokeDasharray}
-                  strokeDashoffset={strokeDashoffset}
-                  strokeLinecap="round"
-                />
-                <text
-                  x={labelPos.x}
-                  y={labelPos.y}
-                  fill="#333"
-                  fontSize="2.5"
-                  fontWeight="bold"
-                  dominantBaseline="middle"
-                  textAnchor="middle"
-                >
-                  {value}%
-                </text>
-              </React.Fragment>
+              <circle
+                key={index}
+                cx="20"
+                cy="20"
+                r={radius}
+                fill="transparent"
+                stroke={color}
+                strokeWidth={strokeWidth}
+                strokeDasharray={strokeDasharray}
+                strokeDashoffset={strokeDashoffset}
+                strokeLinecap="round"
+              />
             );
           })}
         </svg>
