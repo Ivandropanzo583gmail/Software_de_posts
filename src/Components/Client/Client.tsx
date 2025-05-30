@@ -1,7 +1,9 @@
 "use client";
 
 import { Trash, PlusCircle, Pencil } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import Image from "next/image";
+import axios from "axios";
 
 type User = {
   id: number;
@@ -29,27 +31,69 @@ export default function Client() {
     },
   ]);
 
+  const [apiUsers, setApiUsers] = useState<User[]>([]);
   const [form, setForm] = useState({ name: "", email: "" });
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const response = await axios.get("https://jsonplaceholder.typicode.com/users");
+        const transformed = response.data.map((u: any): User => ({
+          id: u.id + 1000, // evitar conflito
+          name: u.name,
+          email: u.email,
+          status: "Active",
+          avatar: `https://i.pravatar.cc/150?img=${Math.floor(Math.random() * 70) + 1}`,
+        }));
+        setApiUsers(transformed);
+      } catch (error) {
+        console.error("Erro ao buscar usuários da API:", error);
+      }
+    };
+    fetchUsers();
+  }, []);
 
   const handleAddUser = () => {
     if (!form.name || !form.email) return;
-    const newUser: User = {
-      id: Date.now(),
-      name: form.name,
-      email: form.email,
-      status: "Active",
-      avatar: `https://i.pravatar.cc/150?img=${Math.floor(Math.random() * 70) + 1}`,
-    };
-    setUsers([newUser, ...users]);
-    setForm({ name: "", email: "" });
+    setLoading(true);
+    setTimeout(() => {
+      const newUser: User = {
+        id: Date.now(),
+        name: form.name,
+        email: form.email,
+        status: "Active",
+        avatar: `https://i.pravatar.cc/150?img=${Math.floor(Math.random() * 70) + 1}`,
+      };
+      setUsers([newUser, ...users]);
+      setForm({ name: "", email: "" });
+      setLoading(false);
+    }, 3000);
   };
 
   const handleDeleteUser = (id: number) => {
-    setUsers(users.filter((u) => u.id !== id));
+    setLoading(true);
+    setTimeout(() => {
+      setUsers(users.filter((u) => u.id !== id));
+      setLoading(false);
+    }, 3000);
+  };
+
+  const handleDeleteApiUser = (id: number) => {
+    setLoading(true);
+    setTimeout(() => {
+      setApiUsers(apiUsers.filter((u) => u.id !== id));
+      setLoading(false);
+    }, 3000);
   };
 
   const handleDeleteAll = () => {
-    setUsers([]);
+    setLoading(true);
+    setTimeout(() => {
+      setUsers([]);
+      setApiUsers([]);
+      setLoading(false);
+    }, 3000);
   };
 
   return (
@@ -79,21 +123,29 @@ export default function Client() {
         <div className="flex flex-col sm:flex-row gap-3 mb-4 w-full">
           <button
             onClick={handleAddUser}
-            className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 text-sm"
+            className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 text-sm disabled:opacity-50"
+            disabled={loading}
           >
             <PlusCircle size={18} />
             Add User
           </button>
           <button
             onClick={handleDeleteAll}
-            className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 text-sm"
+            className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 text-sm disabled:opacity-50"
+            disabled={loading}
           >
             <Trash size={18} />
             Delete All
           </button>
         </div>
 
-        {/* Tabela responsiva */}
+        {loading && (
+          <div className="text-center text-gray-500 mb-4">
+            Aguarde... processando ação
+          </div>
+        )}
+
+        {/* Tabela */}
         <div className="overflow-x-auto">
           <table className="w-full min-w-[640px] text-sm text-left">
             <thead className="bg-gray-100 text-gray-600 uppercase text-xs">
@@ -106,12 +158,14 @@ export default function Client() {
               </tr>
             </thead>
             <tbody className="text-gray-700 divide-y">
-              {users.map((user) => (
+              {[...users, ...apiUsers].map((user) => (
                 <tr key={user.id} className="hover:bg-gray-50 transition">
                   <td className="flex items-center gap-3 px-4 py-4 whitespace-nowrap">
-                    <img
+                    <Image
                       src={user.avatar}
                       alt={user.name}
+                      width={36}
+                      height={36}
                       className="w-9 h-9 rounded-full object-cover shrink-0"
                     />
                     <span className="font-medium truncate max-w-[150px]">{user.name}</span>
@@ -132,22 +186,28 @@ export default function Client() {
                     <button
                       className="text-blue-600 hover:text-blue-800 transition"
                       title="Edit user"
+                      disabled={loading}
                     >
                       <Pencil size={18} />
                     </button>
                   </td>
                   <td className="px-4 py-4">
                     <button
-                      onClick={() => handleDeleteUser(user.id)}
+                      onClick={() =>
+                        user.id > 1000
+                          ? handleDeleteApiUser(user.id)
+                          : handleDeleteUser(user.id)
+                      }
                       className="text-red-600 hover:text-red-800 transition"
                       title="Delete user"
+                      disabled={loading}
                     >
                       <Trash size={18} />
                     </button>
                   </td>
                 </tr>
               ))}
-              {users.length === 0 && (
+              {users.length === 0 && apiUsers.length === 0 && !loading && (
                 <tr>
                   <td colSpan={5} className="text-center text-gray-500 py-6">
                     No users found.

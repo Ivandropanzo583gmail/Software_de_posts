@@ -40,7 +40,7 @@ export default function Sidebar() {
       >
         <div className="flex md:flex-col justify-around md:justify-start md:items-stretch md:space-y-1 overflow-y-auto md:overflow-visible max-h-16 md:max-h-full">
           {mainLinks.map((link) => (
-            <Link key={link.href} href={link.href} className="w-full">
+            <Link key={link.href} href={`/redirect?to=${link.href}`} className="w-full">
               <SidebarItem
                 icon={link.icon}
                 label={link.label}
