@@ -13,40 +13,30 @@ type User = {
   avatar: string;
 };
 
-export default function Client() {
-  const [users, setUsers] = useState<User[]>([
-    {
-      id: 1,
-      name: "Ivandro Lemos",
-      email: "ivandro@email.com",
-      status: "Active",
-      avatar: "https://i.pravatar.cc/150?img=1",
-    },
-    {
-      id: 2,
-      name: "Maria Silva",
-      email: "maria@email.com",
-      status: "Inactive",
-      avatar: "https://i.pravatar.cc/150?img=2",
-    },
-  ]);
+type ApiUser = {
+  id: number;
+  name: string;
+  email: string;
+};
 
-  const [apiUsers, setApiUsers] = useState<User[]>([]);
+export default function Client() {
+  const [users, setUsers] = useState<User[]>([]);
   const [form, setForm] = useState({ name: "", email: "" });
   const [loading, setLoading] = useState(false);
+  const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
 
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await axios.get("https://jsonplaceholder.typicode.com/users");
-        const transformed = response.data.map((u: any): User => ({
-          id: u.id + 1000, // evitar conflito
+        const response = await axios.get<ApiUser[]>("https://jsonplaceholder.typicode.com/users");
+        const transformed = response.data.map((u): User => ({
+          id: u.id,
           name: u.name,
           email: u.email,
           status: "Active",
           avatar: `https://i.pravatar.cc/150?img=${Math.floor(Math.random() * 70) + 1}`,
         }));
-        setApiUsers(transformed);
+        setUsers(transformed);
       } catch (error) {
         console.error("Erro ao buscar usuários da API:", error);
       }
@@ -68,7 +58,32 @@ export default function Client() {
       setUsers([newUser, ...users]);
       setForm({ name: "", email: "" });
       setLoading(false);
-    }, 3000);
+    }, 2000);
+  };
+
+  const handleUpdateUser = async () => {
+    if (form.name.trim() === "" || form.email.trim() === "") {
+      alert("Preencha os campos vazios");
+      return;
+    }
+
+    try {
+      await axios.put(`https://jsonplaceholder.typicode.com/users/${selectedUserId}`, {
+        name: form.name,
+        email: form.email,
+      });
+
+      const updatedUsers = users.map((u) =>
+        u.id === selectedUserId ? { ...u, name: form.name, email: form.email } : u
+      );
+
+      setUsers(updatedUsers);
+      setSelectedUserId(null);
+      setForm({ name: "", email: "" });
+      alert("Usuário atualizado com sucesso!");
+    } catch (error) {
+      console.error("Erro ao atualizar usuário:", error);
+    }
   };
 
   const handleDeleteUser = (id: number) => {
@@ -76,24 +91,15 @@ export default function Client() {
     setTimeout(() => {
       setUsers(users.filter((u) => u.id !== id));
       setLoading(false);
-    }, 3000);
-  };
-
-  const handleDeleteApiUser = (id: number) => {
-    setLoading(true);
-    setTimeout(() => {
-      setApiUsers(apiUsers.filter((u) => u.id !== id));
-      setLoading(false);
-    }, 3000);
+    }, 2000);
   };
 
   const handleDeleteAll = () => {
     setLoading(true);
     setTimeout(() => {
       setUsers([]);
-      setApiUsers([]);
       setLoading(false);
-    }, 3000);
+    }, 2000);
   };
 
   return (
@@ -101,7 +107,6 @@ export default function Client() {
       <div className="max-w-6xl mx-auto bg-white rounded-xl shadow-md p-4 sm:p-6 overflow-x-auto">
         <h1 className="text-2xl font-semibold text-gray-800 mb-6">User Management</h1>
 
-        {/* Formulário */}
         <div className="flex flex-col sm:flex-row gap-4 mb-6">
           <input
             type="text"
@@ -119,15 +124,14 @@ export default function Client() {
           />
         </div>
 
-        {/* Botões */}
         <div className="flex flex-col sm:flex-row gap-3 mb-4 w-full">
           <button
-            onClick={handleAddUser}
+            onClick={selectedUserId ? handleUpdateUser : handleAddUser}
             className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 text-sm disabled:opacity-50"
             disabled={loading}
           >
             <PlusCircle size={18} />
-            Add User
+            {selectedUserId ? "Update User" : "Add User"}
           </button>
           <button
             onClick={handleDeleteAll}
@@ -145,7 +149,6 @@ export default function Client() {
           </div>
         )}
 
-        {/* Tabela */}
         <div className="overflow-x-auto">
           <table className="w-full min-w-[640px] text-sm text-left">
             <thead className="bg-gray-100 text-gray-600 uppercase text-xs">
@@ -158,7 +161,7 @@ export default function Client() {
               </tr>
             </thead>
             <tbody className="text-gray-700 divide-y">
-              {[...users, ...apiUsers].map((user) => (
+              {users.map((user) => (
                 <tr key={user.id} className="hover:bg-gray-50 transition">
                   <td className="flex items-center gap-3 px-4 py-4 whitespace-nowrap">
                     <Image
@@ -187,17 +190,17 @@ export default function Client() {
                       className="text-blue-600 hover:text-blue-800 transition"
                       title="Edit user"
                       disabled={loading}
+                      onClick={() => {
+                        setSelectedUserId(user.id);
+                        setForm({ name: user.name, email: user.email });
+                      }}
                     >
                       <Pencil size={18} />
                     </button>
                   </td>
                   <td className="px-4 py-4">
                     <button
-                      onClick={() =>
-                        user.id > 1000
-                          ? handleDeleteApiUser(user.id)
-                          : handleDeleteUser(user.id)
-                      }
+                      onClick={() => handleDeleteUser(user.id)}
                       className="text-red-600 hover:text-red-800 transition"
                       title="Delete user"
                       disabled={loading}
@@ -207,7 +210,7 @@ export default function Client() {
                   </td>
                 </tr>
               ))}
-              {users.length === 0 && apiUsers.length === 0 && !loading && (
+              {users.length === 0 && !loading && (
                 <tr>
                   <td colSpan={5} className="text-center text-gray-500 py-6">
                     No users found.

@@ -21,7 +21,8 @@ function calculateDash(value: number) {
   return (value / 100) * circumference;
 }
 
-export default function SalesSources(): JSX.Element {
+// 🔧 Tiramos ": JSX.Element"
+export default function SalesSources() {
   let offset = 0;
 
   return (

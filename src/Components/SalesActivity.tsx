@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import axios from "axios";
+import Image from "next/image";
 
 export default function SalesActivity() {
   const [chartUrl, setChartUrl] = useState("");
@@ -108,11 +109,15 @@ export default function SalesActivity() {
       <div className="text-2xl font-bold mb-4 text-purple-600">₦715,000</div>
 
       {chartUrl ? (
-        <img
-          src={chartUrl}
-          alt="Sales Chart"
-          className="w-full h-auto object-contain rounded-md"
-        />
+        <div className="relative w-full h-[260px]">
+          <Image
+            src={chartUrl}
+            alt="Sales Chart"
+            layout="fill"
+            objectFit="contain"
+            className="rounded-md"
+          />
+        </div>
       ) : (
         <p className="text-gray-400 text-sm">Carregando gráfico...</p>
       )}
